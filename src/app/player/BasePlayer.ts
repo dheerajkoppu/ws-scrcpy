@@ -344,56 +344,85 @@ export abstract class BasePlayer extends TypedEmitter<PlayerEvents> {
     }
 
 public setParent(parent: HTMLElement): void {
-    this.parentElement = parent;
-    
-    // === Screen dimensions (no frame, just screen size) ===
-    const screenWidth = 320; // actual screen width
-    const screenHeight = 640; // actual screen height
-    
-    // === Create frame wrapper (now screen-sized) ===
-    const frameWrapper = document.createElement('div');
-    frameWrapper.className = 'device-frame';
-    frameWrapper.style.position = 'relative';
-    frameWrapper.style.width = `${screenWidth}px`;
-    frameWrapper.style.height = `${screenHeight}px`;
-    
-    // === Back image (screen-sized) ===
-    const backImg = document.createElement('img');
-    backImg.src = 'https://res.cloudinary.com/dkvq8hywv/image/upload/v1754087730/back_syugrm.webp';
-    backImg.style.position = 'absolute';
-    backImg.style.width = 320 + 'px'; // actual screen width
-    backImg.style.height = 640 + 'px'; // actual screen height
-    backImg.style.top = '0';
-    backImg.style.left = '0';
-    backImg.style.objectFit = 'cover';
-    frameWrapper.appendChild(backImg);
-    
-    // === Emulator canvas (no offset, full screen) ===
-    this.touchableCanvas.width = screenWidth;
-    this.touchableCanvas.height = screenHeight;
-    this.touchableCanvas.style.position = 'absolute';
-    this.touchableCanvas.style.left = '0px';
-    this.touchableCanvas.style.top = '0px';
-    this.touchableCanvas.style.width = `${screenWidth}px`;
-    this.touchableCanvas.style.height = `${screenHeight}px`;
-    this.touchableCanvas.className = 'touch-layer';
-    frameWrapper.appendChild(this.touchableCanvas);
-    
-    // === Foreground mask image (screen-sized) ===
-    const frontImg = document.createElement('img');
-    frontImg.src = 'https://res.cloudinary.com/dkvq8hywv/image/upload/v1754089110/mask_sfgzev.webp';
-    frontImg.style.position = 'absolute';
-    frontImg.style.top = '0';
-    frontImg.style.left = '0';
-    frontImg.style.width = 320 + 'px'; // actual screen width
-    frontImg.style.height = 640 + 'px'; // actual screen height
-    frontImg.style.pointerEvents = 'none';
-    frontImg.draggable = false;
-    frameWrapper.appendChild(frontImg);
-    
-    // === Add existing control UI and frame wrapper to parent ===
-    parent.appendChild(this.tag); // existing control UI
-    parent.appendChild(frameWrapper);
+  this.parentElement = parent;
+
+  const DESIGN_W = 320;
+  const DESIGN_H = 640;
+
+  // outer container to center & allow scaling
+  const outer = document.createElement('div');
+  Object.assign(outer.style, {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+  });
+
+  // frame wrapper at design resolution
+  const frameWrapper = document.createElement('div');
+  frameWrapper.className = 'device-frame';
+  Object.assign(frameWrapper.style, {
+    position: 'relative',
+    width: `${DESIGN_W}px`,
+    height: `${DESIGN_H}px`,
+    transformOrigin: 'top left',
+  });
+
+  // scale to fit parent while preserving aspect ratio
+  const resize = () => {
+    const rect = parent.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const scale = Math.min(rect.width / DESIGN_W, rect.height / DESIGN_H);
+    frameWrapper.style.transform = `scale(${scale})`;
+  };
+  new ResizeObserver(resize).observe(parent);
+  resize();
+
+  // back image (fills design screen)
+  const backImg = document.createElement('img');
+  backImg.src = 'https://res.cloudinary.com/dkvq8hywv/image/upload/v1754087730/back_syugrm.webp';
+  Object.assign(backImg.style, {
+    position: 'absolute',
+    inset: '0',
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    pointerEvents: 'none',
+    userSelect: 'none',
+  });
+
+  // emulator canvas
+  this.touchableCanvas.width = DESIGN_W;
+  this.touchableCanvas.height = DESIGN_H;
+  Object.assign(this.touchableCanvas.style, {
+    position: 'absolute',
+    inset: '0',
+    width: '100%',
+    height: '100%',
+    display: 'block',
+  });
+  this.touchableCanvas.className = 'touch-layer';
+
+  // front/mask image
+  const frontImg = document.createElement('img');
+  frontImg.src = 'https://res.cloudinary.com/dkvq8hywv/image/upload/v1754089110/mask_sfgzev.webp';
+  Object.assign(frontImg.style, {
+    position: 'absolute',
+    inset: '0',
+    width: '100%',
+    height: '100%',
+    pointerEvents: 'none',
+    userSelect: 'none',
+  });
+
+  // build DOM
+  frameWrapper.append(backImg, this.touchableCanvas, frontImg);
+  outer.appendChild(frameWrapper);
+  parent.appendChild(this.tag); // existing controls
+  parent.appendChild(outer);
 }
 
 
