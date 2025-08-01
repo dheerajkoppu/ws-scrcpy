@@ -94,7 +94,7 @@ export abstract class BasePlayer extends TypedEmitter<PlayerEvents> {
         bitrate: 524288,
         maxFps: 24,
         iFrameInterval: 5,
-        bounds: new Size(480, 480),
+        bounds: new Size(302, 640),
         sendFrameMeta: false,
     });
 
@@ -346,7 +346,7 @@ export abstract class BasePlayer extends TypedEmitter<PlayerEvents> {
 public setParent(parent: HTMLElement): void {
   this.parentElement = parent;
 
-  const DESIGN_W = 320;
+  const DESIGN_W = 302;
   const DESIGN_H = 640;
 
   // outer container to center & allow scaling
