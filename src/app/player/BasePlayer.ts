@@ -346,47 +346,47 @@ export abstract class BasePlayer extends TypedEmitter<PlayerEvents> {
 public setParent(parent: HTMLElement): void {
     this.parentElement = parent;
     
-    // === Screen dimensions (scaled down to 320x640) ===
-    const screenWidth = 320; // scaled screen width
-    const screenHeight = 640; // scaled screen height
+    // === Screen dimensions (no frame, just screen size) ===
+    const screenWidth = 320; // actual screen width
+    const screenHeight = 640; // actual screen height
     
-    // === Create frame wrapper (hardcoded 320x640) ===
+    // === Create frame wrapper (now screen-sized) ===
     const frameWrapper = document.createElement('div');
     frameWrapper.className = 'device-frame';
     frameWrapper.style.position = 'relative';
-    frameWrapper.style.width = '320px';
-    frameWrapper.style.height = '640px';
+    frameWrapper.style.width = `${screenWidth}px`;
+    frameWrapper.style.height = `${screenHeight}px`;
     
-    // === Back image (hardcoded 320x640) ===
+    // === Back image (screen-sized) ===
     const backImg = document.createElement('img');
     backImg.src = 'https://res.cloudinary.com/dkvq8hywv/image/upload/v1754087730/back_syugrm.webp';
     backImg.style.position = 'absolute';
-    backImg.style.width = '320px';
-    backImg.style.height = '640px';
+    backImg.style.width = 320 + 'px'; // actual screen width
+    backImg.style.height = 640 + 'px'; // actual screen height
     backImg.style.top = '0';
     backImg.style.left = '0';
     backImg.style.objectFit = 'cover';
     frameWrapper.appendChild(backImg);
     
-    // === Emulator canvas (hardcoded 320x640) ===
-    this.touchableCanvas.width = 320;
-    this.touchableCanvas.height = 640;
+    // === Emulator canvas (no offset, full screen) ===
+    this.touchableCanvas.width = screenWidth;
+    this.touchableCanvas.height = screenHeight;
     this.touchableCanvas.style.position = 'absolute';
     this.touchableCanvas.style.left = '0px';
     this.touchableCanvas.style.top = '0px';
-    this.touchableCanvas.style.width = '320px';
-    this.touchableCanvas.style.height = '640px';
+    this.touchableCanvas.style.width = `${screenWidth}px`;
+    this.touchableCanvas.style.height = `${screenHeight}px`;
     this.touchableCanvas.className = 'touch-layer';
     frameWrapper.appendChild(this.touchableCanvas);
     
-    // === Foreground mask image (hardcoded 320x640) ===
+    // === Foreground mask image (screen-sized) ===
     const frontImg = document.createElement('img');
     frontImg.src = 'https://res.cloudinary.com/dkvq8hywv/image/upload/v1754089110/mask_sfgzev.webp';
     frontImg.style.position = 'absolute';
     frontImg.style.top = '0';
     frontImg.style.left = '0';
-    frontImg.style.width = '320px';
-    frontImg.style.height = '640px';
+    frontImg.style.width = 320 + 'px'; // actual screen width
+    frontImg.style.height = 640 + 'px'; // actual screen height
     frontImg.style.pointerEvents = 'none';
     frontImg.draggable = false;
     frameWrapper.appendChild(frontImg);
