@@ -342,17 +342,16 @@ export abstract class BasePlayer extends TypedEmitter<PlayerEvents> {
     public getTouchableElement(): HTMLCanvasElement {
         return this.touchableCanvas;
     }
-
 public setParent(parent: HTMLElement): void {
     this.parentElement = parent;
     
     // === Frame dimensions and screen region from layout ===
-    const layoutWidth = 1466;
-    const layoutHeight = 3101;
-    const screenX = 57; // x offset of screen in frame
-    const screenY = 56; // y offset of screen in frame
-    const screenWidth = 1344; // actual screen width
-    const screenHeight = 2992; // actual screen height
+    const layoutWidth = 640;
+    const layoutHeight = 320;
+    const screenWidth = 600;
+    const screenHeight = 280;
+    const screenX = (layoutWidth - screenWidth) / 2; // center horizontally
+    const screenY = (layoutHeight - screenHeight) / 2; // center vertically
     
     // === Create frame wrapper ===
     const frameWrapper = document.createElement('div');
@@ -383,7 +382,7 @@ public setParent(parent: HTMLElement): void {
     this.touchableCanvas.className = 'touch-layer';
     frameWrapper.appendChild(this.touchableCanvas);
     
-    // === Foreground device frame image (should use mask.webp, not layout.webp) ===
+    // === Foreground device frame image ===
     const frontImg = document.createElement('img');
     frontImg.src = './images/pixel-9-pro-xl/mask.webp';
     frontImg.style.position = 'absolute';
@@ -395,8 +394,8 @@ public setParent(parent: HTMLElement): void {
     frontImg.draggable = false;
     frameWrapper.appendChild(frontImg);
     
-    // === Add existing control UI and frame wrapper to parent ===
-    parent.appendChild(this.tag); // existing control UI
+    // === Add control UI and frame wrapper to parent ===
+    parent.appendChild(this.tag); 
     parent.appendChild(frameWrapper);
 }
 
