@@ -345,25 +345,25 @@ export abstract class BasePlayer extends TypedEmitter<PlayerEvents> {
 
 public setParent(parent: HTMLElement): void {
     this.parentElement = parent;
-
+    
     // === Frame dimensions and screen region from layout ===
     const layoutWidth = 1466;
     const layoutHeight = 3101;
-    const screenX = 57;        // x offset of screen in frame
-    const screenY = 56;        // y offset of screen in frame
-    const screenWidth = 1344;  // actual screen width
+    const screenX = 57; // x offset of screen in frame
+    const screenY = 56; // y offset of screen in frame
+    const screenWidth = 1344; // actual screen width
     const screenHeight = 2992; // actual screen height
-
+    
     // === Create frame wrapper ===
     const frameWrapper = document.createElement('div');
     frameWrapper.className = 'device-frame';
     frameWrapper.style.position = 'relative';
     frameWrapper.style.width = `${layoutWidth}px`;
     frameWrapper.style.height = `${layoutHeight}px`;
-
+    
     // === Optional back.webp layer ===
     const backImg = document.createElement('img');
-    backImg.src = '/images/pixel-9-pro-xl/back.webp';
+    backImg.src = './images/pixel-9-pro-xl/back.webp';
     backImg.style.position = 'absolute';
     backImg.style.width = '100%';
     backImg.style.height = '100%';
@@ -371,7 +371,7 @@ public setParent(parent: HTMLElement): void {
     backImg.style.left = '0';
     backImg.style.objectFit = 'cover';
     frameWrapper.appendChild(backImg);
-
+    
     // === Emulator canvas ===
     this.touchableCanvas.width = screenWidth;
     this.touchableCanvas.height = screenHeight;
@@ -382,10 +382,10 @@ public setParent(parent: HTMLElement): void {
     this.touchableCanvas.style.height = `${screenHeight}px`;
     this.touchableCanvas.className = 'touch-layer';
     frameWrapper.appendChild(this.touchableCanvas);
-
-    // === Foreground device frame image ===
+    
+    // === Foreground device frame image (should use mask.webp, not layout.webp) ===
     const frontImg = document.createElement('img');
-    frontImg.src = '/images/pixel-9-pro-xl/layout.webp';
+    frontImg.src = './images/pixel-9-pro-xl/mask.webp';
     frontImg.style.position = 'absolute';
     frontImg.style.top = '0';
     frontImg.style.left = '0';
@@ -394,8 +394,8 @@ public setParent(parent: HTMLElement): void {
     frontImg.style.pointerEvents = 'none';
     frontImg.draggable = false;
     frameWrapper.appendChild(frontImg);
-
-    // === Optional shadow DOM container for metadata ===
+    
+    // === Add existing control UI and frame wrapper to parent ===
     parent.appendChild(this.tag); // existing control UI
     parent.appendChild(frameWrapper);
 }
